@@ -1,0 +1,14 @@
+﻿[
+    {
+        "id": 1463,
+        "name": "Owners",
+        "description": "",
+        "permission": "owner"
+    },
+    {
+        "id": 1464,
+        "name": "Developers",
+        "description": "Developers developers developers",
+        "permission": "read"
+    }
+]
