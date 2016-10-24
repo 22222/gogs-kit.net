@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>GogsKit</id>
+    <version>$version$</version>
+    <title>GogsKit</title>
+    <authors>22222</authors>
+    <projectUrl>https://github.com/22222/gogs-kit.net</projectUrl>
+    <licenseUrl>https://github.com/22222/gogs-kit.net/blob/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A .NET client library for the Gogs API.</description>
+    <tags>gogs</tags>
+  </metadata>
+</package>

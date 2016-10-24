@@ -1,0 +1,15 @@
+version: 0.4.0.{build}
+configuration: Release
+platform: Any CPU
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+before_build:
+- cmd: nuget restore
+build:
+  publish_nuget: true
+  verbosity: minimal
+artifacts:
+- path: GogsKit\bin\Release\GogsKit.dll
+- path: GogsKit\bin\Release\GogsKit.XML
