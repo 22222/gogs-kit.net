@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GogsKit
@@ -25,7 +26,7 @@ namespace GogsKit
         /// <summary>
         /// Creates a user.
         /// </summary>
-        public async Task<UserResult> CreateUserAsync(CreateUserOption user)
+        public async Task<UserResult> CreateUserAsync(CreateUserOption user, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
 
@@ -33,7 +34,7 @@ namespace GogsKit
             using (var httpClient = await context.CreateHttpClientAsync())
             using (var requestContent = new StringContent(user.ToJson(), Encoding.UTF8, mediaType: "application/json"))
             {
-                var response = await httpClient.PostAsync(requestUrl, requestContent);
+                var response = await httpClient.PostAsync(requestUrl, requestContent, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var result = JsonEntity.ParseJson<UserResult>(responseJson);
                 return result;
@@ -43,7 +44,7 @@ namespace GogsKit
         /// <summary>
         /// Edits the specified user.
         /// </summary>
-        public async Task<UserResult> EditUserAsync(string username, EditUserOption user)
+        public async Task<UserResult> EditUserAsync(string username, EditUserOption user, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -54,7 +55,7 @@ namespace GogsKit
             using (var httpClient = await context.CreateHttpClientAsync())
             using (var requestContent = new StringContent(user.ToJson(), Encoding.UTF8, mediaType: "application/json"))
             {
-                var response = await httpClient.PutAsync(requestUrl, requestContent);
+                var response = await httpClient.PutAsync(requestUrl, requestContent, cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var result = JsonEntity.ParseJson<UserResult>(responseJson);
                 return result;
@@ -64,7 +65,7 @@ namespace GogsKit
         /// <summary>
         /// Deletes the specified user.
         /// </summary>
-        public async Task DeleteUserAsync(string username)
+        public async Task DeleteUserAsync(string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -72,14 +73,14 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"admin/users/{username}");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                await httpClient.DeleteAsync(requestUrl);
+                await httpClient.DeleteAsync(requestUrl, cancellationToken: cancellationToken);
             }
         }
 
         /// <summary>
         /// Creates an organization with the specified owner.
         /// </summary>
-        public async Task<OrganizationResult> CreateOrg(string username, CreateOrgOption org)
+        public async Task<OrganizationResult> CreateOrg(string username, CreateOrgOption org, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -90,7 +91,7 @@ namespace GogsKit
             using (var httpClient = await context.CreateHttpClientAsync())
             using (var requestContent = new StringContent(org.ToJson(), Encoding.UTF8, mediaType: "application/json"))
             {
-                var response = await httpClient.PostAsync(requestUrl, requestContent);
+                var response = await httpClient.PostAsync(requestUrl, requestContent, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var result = JsonEntity.ParseJson<OrganizationResult>(responseJson);
                 return result;
@@ -100,7 +101,7 @@ namespace GogsKit
         /// <summary>
         /// Creates a team in the specified organization.
         /// </summary>
-        public async Task<TeamResult> CreateTeam(string orgName, CreateTeamOption team)
+        public async Task<TeamResult> CreateTeam(string orgName, CreateTeamOption team, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (orgName == null) throw new ArgumentNullException(nameof(orgName));
             if (string.IsNullOrWhiteSpace(orgName)) throw new ArgumentException($"{nameof(orgName)} is required", paramName: nameof(orgName));
@@ -114,7 +115,7 @@ namespace GogsKit
                 HttpResponseMessage response;
                 try
                 {
-                    response = await httpClient.PostAsync(requestUrl, requestContent);
+                    response = await httpClient.PostAsync(requestUrl, requestContent, cancellationToken: cancellationToken);
                 }
                 catch (GogsKitResponseException ex)
                 {
@@ -133,7 +134,7 @@ namespace GogsKit
         /// <summary>
         /// Adds the specified user to the specified team, or does nothing if the user is already in the team.
         /// </summary>
-        public async Task AddTeamMember(int teamId, string username)
+        public async Task AddTeamMember(int teamId, string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (teamId <= 0) throw new ArgumentException($"{nameof(teamId)} must be positive", paramName: nameof(teamId));
 
@@ -143,14 +144,14 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"admin/teams/{teamId}/members/{username}");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                await httpClient.PutAsync(requestUrl, content: null);
+                await httpClient.PutAsync(requestUrl, content: null, cancellationToken: cancellationToken);
             }
         }
 
         /// <summary>
         /// Removes the specified user from the specified team.
         /// </summary>
-        public async Task RemoveTeamMember(int teamId, string username)
+        public async Task RemoveTeamMember(int teamId, string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (teamId <= 0) throw new ArgumentException($"{nameof(teamId)} must be positive", paramName: nameof(teamId));
 
@@ -160,7 +161,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"admin/teams/{teamId}/members/{username}");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                await httpClient.DeleteAsync(requestUrl);
+                await httpClient.DeleteAsync(requestUrl, cancellationToken: cancellationToken);
             }
         }
     }

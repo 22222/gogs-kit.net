@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GogsKit
@@ -24,7 +25,7 @@ namespace GogsKit
         /// <summary>
         /// Search for users.
         /// </summary>
-        public async Task<IReadOnlyCollection<UserResult>> SearchAsync(string query, int? limit = null)
+        public async Task<IReadOnlyCollection<UserResult>> SearchAsync(string query, int? limit = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (string.IsNullOrEmpty(query))
             {
@@ -41,7 +42,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri("users/search", parameters);
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                var response = await httpClient.GetAsync(requestUrl);
+                var response = await httpClient.GetAsync(requestUrl, cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var result = JsonEntity.ParseJson<DataResultWrapper<UserResult[]>>(responseJson);
                 return result?.Data ?? Array.Empty<UserResult>();
@@ -51,7 +52,7 @@ namespace GogsKit
         /// <summary>
         /// Returns the user with the specified username.
         /// </summary>
-        public async Task<UserResult> GetAsync(string username)
+        public async Task<UserResult> GetAsync(string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -59,7 +60,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"users/{username}");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                var response = await httpClient.GetAsync(requestUrl);
+                var response = await httpClient.GetAsync(requestUrl, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var result = JsonEntity.ParseJson<UserResult>(responseJson);
                 return result;
@@ -69,7 +70,7 @@ namespace GogsKit
         /// <summary>
         /// Returns the access tokens for the user with the specified username.
         /// </summary>
-        public async Task<IReadOnlyCollection<TokenResult>> GetTokensAsync(string username)
+        public async Task<IReadOnlyCollection<TokenResult>> GetTokensAsync(string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -77,7 +78,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"users/{username}/tokens");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                var response = await httpClient.GetAsync(requestUrl);
+                var response = await httpClient.GetAsync(requestUrl, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var results = JsonEntity.ParseJsonArray<TokenResult>(responseJson);
                 return results ?? Array.Empty<TokenResult>();
@@ -87,7 +88,7 @@ namespace GogsKit
         /// <summary>
         /// Creates and returns a token with the specified <paramref name="name"/> for the user with the specified username.
         /// </summary>
-        public async Task<TokenResult> CreateTokenAsync(string username, string name)
+        public async Task<TokenResult> CreateTokenAsync(string username, string name, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -99,7 +100,7 @@ namespace GogsKit
             using (var httpClient = await context.CreateHttpClientAsync())
             using (var requestContent = new FormUrlEncodedContent(new Dictionary<string, string> { ["name"] = name }))
             {
-                var response = await httpClient.PostAsync(requestUrl, requestContent);
+                var response = await httpClient.PostAsync(requestUrl, requestContent, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var result = JsonEntity.ParseJson<TokenResult>(responseJson);
                 return result;
@@ -109,7 +110,7 @@ namespace GogsKit
         /// <summary>
         /// Returns the keys for the user with the specified username.
         /// </summary>
-        public async Task<IReadOnlyCollection<KeyResult>> GetKeysAsync(string username)
+        public async Task<IReadOnlyCollection<KeyResult>> GetKeysAsync(string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -117,7 +118,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"users/{username}/keys");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                var response = await httpClient.GetAsync(requestUrl);
+                var response = await httpClient.GetAsync(requestUrl, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var results = JsonEntity.ParseJsonArray<KeyResult>(responseJson);
                 return results ?? Array.Empty<KeyResult>();
@@ -127,7 +128,7 @@ namespace GogsKit
         /// <summary>
         /// Returns the followers of the user with the specified username.
         /// </summary>
-        public async Task<IReadOnlyCollection<UserResult>> GetFollowersAsync(string username)
+        public async Task<IReadOnlyCollection<UserResult>> GetFollowersAsync(string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -135,7 +136,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"users/{username}/followers");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                var response = await httpClient.GetAsync(requestUrl);
+                var response = await httpClient.GetAsync(requestUrl, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var results = JsonEntity.ParseJsonArray<UserResult>(responseJson);
                 return results ?? Array.Empty<UserResult>();
@@ -145,7 +146,7 @@ namespace GogsKit
         /// <summary>
         /// Returns the organizations of the user with the specified username.
         /// </summary>
-        public async Task<IReadOnlyCollection<OrganizationResult>> GetOrganizationsAsync(string username)
+        public async Task<IReadOnlyCollection<OrganizationResult>> GetOrganizationsAsync(string username, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (username == null) throw new ArgumentNullException(nameof(username));
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException($"{nameof(username)} is required", paramName: nameof(username));
@@ -153,7 +154,7 @@ namespace GogsKit
             var requestUrl = context.CreateRequestUri($"users/{username}/orgs");
             using (var httpClient = await context.CreateHttpClientAsync())
             {
-                var response = await httpClient.GetAsync(requestUrl);
+                var response = await httpClient.GetAsync(requestUrl, cancellationToken: cancellationToken);
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var results = JsonEntity.ParseJsonArray<OrganizationResult>(responseJson);
                 return results ?? Array.Empty<OrganizationResult>();
