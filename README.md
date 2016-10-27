@@ -4,10 +4,15 @@ This library is not complete.  So far it's mostly focused on the user, organizat
 
 The design is inspired by the [Octokit.net library](https://github.com/octokit/octokit.net).
 
+[![Build status](https://ci.appveyor.com/api/projects/status/n52fh4o3qedfqjgc?svg=true)](https://ci.appveyor.com/project/22222/gogs-kit-net)
 
 Installation
 ============
-For now, you'll have to build this library on your own.  There will probably be a NuGet package at some point.
+The easiest way to use this library is to install the [NuGet package](https://www.nuget.org/packages/GogsKit/):
+
+```
+PM> Install-Package GogsKit
+```
 
 
 Getting Started
