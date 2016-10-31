@@ -87,7 +87,7 @@ namespace GogsKit
 
             if (org == null) throw new ArgumentNullException(nameof(org));
 
-            var requestUrl = context.CreateRequestUri($"admin/{username}/orgs");
+            var requestUrl = context.CreateRequestUri($"admin/users/{username}/orgs");
             using (var httpClient = await context.CreateHttpClientAsync())
             using (var requestContent = new StringContent(org.ToJson(), Encoding.UTF8, mediaType: "application/json"))
             {
